@@ -1,4 +1,4 @@
-package com.example.tmbd_app
+package com.cinetrack.cinetrack
 
 import io.flutter.embedding.android.FlutterActivity
 
