@@ -1,4 +1,5 @@
-import 'package:cinetrack/core/widgets/placeholder_home_page.dart';
+import 'package:cinetrack/core/widgets/movie_details_placeholder_page.dart';
+import 'package:cinetrack/features/discover/presentation/screens/discover_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -6,8 +7,15 @@ final GoRouter appRouter = GoRouter(
   routes: [
     GoRoute(
       path: '/',
-      name: 'home',
-      builder: (context, state) => const PlaceholderHomePage(),
+      name: 'discover',
+      builder: (context, state) => const DiscoverScreen(),
+    ),
+    GoRoute(
+      path: '/movie/:id',
+      name: 'movieDetails',
+      builder: (context, state) => MovieDetailsPlaceholderPage(
+        movieId: state.pathParameters['id']!,
+      ),
     ),
   ],
 );
