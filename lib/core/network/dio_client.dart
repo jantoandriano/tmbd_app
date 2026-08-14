@@ -1,3 +1,4 @@
+import 'package:cinetrack/config/env/env_config.dart';
 import 'package:cinetrack/core/constants/api_constants.dart';
 import 'package:cinetrack/core/network/auth_interceptor.dart';
 import 'package:cinetrack/core/network/logging_interceptor.dart';
@@ -13,6 +14,7 @@ class DioClient {
         baseUrl: baseUrl,
         connectTimeout: ApiConstants.connectTimeout,
         receiveTimeout: ApiConstants.receiveTimeout,
+        queryParameters: {'api_key': EnvConfig.tmdbApiKey},
       ),
     );
 
