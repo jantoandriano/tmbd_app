@@ -60,7 +60,16 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     final state = ref.watch(discoverProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('CineTrack')),
+      appBar: AppBar(
+        title: const Row(
+          mainAxisSize: MainAxisSize.min,
+          children: [
+            Icon(Icons.local_movies_rounded),
+            SizedBox(width: 8),
+            Text('CineTrack'),
+          ],
+        ),
+      ),
       body: state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(

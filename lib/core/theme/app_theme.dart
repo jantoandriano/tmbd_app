@@ -15,12 +15,12 @@ class AppTheme {
     colorScheme: colorScheme,
     scaffoldBackgroundColor: colorScheme.surface,
     appBarTheme: AppBarTheme(
-      backgroundColor: colorScheme.surface,
-      foregroundColor: colorScheme.onSurface,
+      backgroundColor: colorScheme.primaryContainer,
+      foregroundColor: colorScheme.onPrimaryContainer,
       elevation: 0,
       centerTitle: false,
       titleTextStyle: TextStyle(
-        color: colorScheme.onSurface,
+        color: colorScheme.onPrimaryContainer,
         fontSize: 22,
         fontWeight: FontWeight.w700,
       ),
