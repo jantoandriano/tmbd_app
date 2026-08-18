@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cinetrack/core/constants/api_constants.dart';
 import 'package:cinetrack/core/theme/app_theme.dart';
@@ -154,7 +156,7 @@ class _DiscoverBody extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           if (nowPlaying.isNotEmpty) ...[
-            _HeroBanner(movie: nowPlaying.first),
+            _HeroCarousel(movies: nowPlaying.take(3).toList()),
             const Divider(height: 2),
           ],
           if (nowPlaying.isNotEmpty)
@@ -178,10 +180,96 @@ class _DiscoverBody extends StatelessWidget {
   }
 }
 
-class _HeroBanner extends StatelessWidget {
-  const _HeroBanner({required this.movie});
+class _HeroCarousel extends StatefulWidget {
+  const _HeroCarousel({required this.movies});
+
+  final List<Movie> movies;
+
+  @override
+  State<_HeroCarousel> createState() => _HeroCarouselState();
+}
+
+class _HeroCarouselState extends State<_HeroCarousel> {
+  static const _autoPlayInterval = Duration(seconds: 5);
+
+  late final PageController _pageController = PageController();
+  Timer? _timer;
+  int _currentPage = 0;
+
+  @override
+  void initState() {
+    super.initState();
+    _startTimer();
+  }
+
+  void _startTimer() {
+    _timer?.cancel();
+    if (widget.movies.length <= 1) return;
+    _timer = Timer.periodic(_autoPlayInterval, (_) {
+      final nextPage = (_currentPage + 1) % widget.movies.length;
+      _pageController.animateToPage(
+        nextPage,
+        duration: const Duration(milliseconds: 400),
+        curve: Curves.easeInOut,
+      );
+    });
+  }
+
+  @override
+  void dispose() {
+    _timer?.cancel();
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        AspectRatio(
+          aspectRatio: 16 / 9,
+          child: PageView.builder(
+            controller: _pageController,
+            itemCount: widget.movies.length,
+            onPageChanged: (index) {
+              setState(() => _currentPage = index);
+              _startTimer();
+            },
+            itemBuilder: (context, index) {
+              final posterPath = widget.movies[index].posterPath;
+              return posterPath == null
+                  ? const ColoredBox(color: Colors.black12)
+                  : CachedNetworkImage(
+                      imageUrl: '${ApiConstants.tmdbImageBaseUrl}$posterPath',
+                      fit: BoxFit.cover,
+                    );
+            },
+          ),
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
+          child: _HeroCaption(
+            movie: widget.movies[_currentPage],
+            slideCount: widget.movies.length,
+            currentSlide: _currentPage,
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _HeroCaption extends StatelessWidget {
+  const _HeroCaption({
+    required this.movie,
+    required this.slideCount,
+    required this.currentSlide,
+  });
 
   final Movie movie;
+  final int slideCount;
+  final int currentSlide;
 
   String get _tagline {
     final overview = movie.overview.trim();
@@ -192,72 +280,53 @@ class _HeroBanner extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final posterPath = movie.posterPath;
-
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        AspectRatio(
-          aspectRatio: 16 / 9,
-          child: posterPath == null
-              ? const ColoredBox(color: Colors.black12)
-              : CachedNetworkImage(
-                  imageUrl: '${ApiConstants.tmdbImageBaseUrl}$posterPath',
-                  fit: BoxFit.cover,
-                ),
-        ),
-        Padding(
-          padding: const EdgeInsets.fromLTRB(16, 12, 16, 16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                'IN THEATERS',
-                style: GoogleFonts.archivo(
-                  fontSize: 11,
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.12 * 11,
-                  color: const Color(0xffae1800),
-                ),
-              ),
-              const SizedBox(height: 6),
-              Text(
-                movie.title,
-                style: GoogleFonts.archivo(
-                  fontSize: 20,
-                  fontWeight: FontWeight.w800,
-                  color: AppTheme.textPrimary,
-                ),
-              ),
-              if (_tagline.isNotEmpty) ...[
-                const SizedBox(height: 4),
-                Text(
-                  _tagline,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: GoogleFonts.archivo(
-                    fontSize: 12,
-                    color: AppTheme.textPrimary.withValues(alpha: 0.7),
-                  ),
-                ),
-              ],
-              const SizedBox(height: 10),
-              Row(
-                children: List.generate(3, (index) {
-                  return Padding(
-                    padding: EdgeInsets.only(right: index == 2 ? 0 : 6),
-                    child: Container(
-                      width: 18,
-                      height: 3,
-                      color: index == 0
-                          ? AppTheme.accent
-                          : const Color(0xffdcdad9),
-                    ),
-                  );
-                }),
-              ),
-            ],
+        Text(
+          'IN THEATERS',
+          style: GoogleFonts.archivo(
+            fontSize: 11,
+            fontWeight: FontWeight.w600,
+            letterSpacing: 0.12 * 11,
+            color: const Color(0xffae1800),
           ),
+        ),
+        const SizedBox(height: 6),
+        Text(
+          movie.title,
+          style: GoogleFonts.archivo(
+            fontSize: 20,
+            fontWeight: FontWeight.w800,
+            color: AppTheme.textPrimary,
+          ),
+        ),
+        if (_tagline.isNotEmpty) ...[
+          const SizedBox(height: 4),
+          Text(
+            _tagline,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: GoogleFonts.archivo(
+              fontSize: 12,
+              color: AppTheme.textPrimary.withValues(alpha: 0.7),
+            ),
+          ),
+        ],
+        const SizedBox(height: 10),
+        Row(
+          children: List.generate(slideCount, (index) {
+            return Padding(
+              padding: EdgeInsets.only(right: index == slideCount - 1 ? 0 : 6),
+              child: Container(
+                width: 18,
+                height: 3,
+                color: index == currentSlide
+                    ? AppTheme.accent
+                    : const Color(0xffdcdad9),
+              ),
+            );
+          }),
         ),
       ],
     );
