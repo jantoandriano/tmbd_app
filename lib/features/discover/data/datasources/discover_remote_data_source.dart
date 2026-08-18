@@ -1,13 +1,14 @@
 import 'package:cinetrack/features/discover/data/models/movie_page_response_model.dart';
 import 'package:dio/dio.dart';
 
-// Deliberate clean-architecture pattern: a single-method interface for
-// dependency inversion and mockability, not a smell.
-// ignore: one_member_abstracts
 abstract class DiscoverRemoteDataSource {
   /// Throws [DioException] on failure — the repository is responsible for
   /// catching it and converting it to a domain-level failure.
-  Future<MoviePageResponseModel> fetchPopularMovies({required int page});
+  Future<MoviePageResponseModel> fetchNowPlayingMovies({required int page});
+
+  /// Throws [DioException] on failure — the repository is responsible for
+  /// catching it and converting it to a domain-level failure.
+  Future<MoviePageResponseModel> fetchUpcomingMovies({required int page});
 }
 
 class DiscoverRemoteDataSourceImpl implements DiscoverRemoteDataSource {
@@ -16,11 +17,20 @@ class DiscoverRemoteDataSourceImpl implements DiscoverRemoteDataSource {
   final Dio _dio;
 
   @override
-  Future<MoviePageResponseModel> fetchPopularMovies({
+  Future<MoviePageResponseModel> fetchNowPlayingMovies({
+    required int page,
+  }) => _fetch('/movie/now_playing', page: page);
+
+  @override
+  Future<MoviePageResponseModel> fetchUpcomingMovies({required int page}) =>
+      _fetch('/movie/upcoming', page: page);
+
+  Future<MoviePageResponseModel> _fetch(
+    String path, {
     required int page,
   }) async {
     final response = await _dio.get<Map<String, dynamic>>(
-      '/movie/popular',
+      path,
       queryParameters: {'page': page},
     );
     return MoviePageResponseModel.fromJson(response.data!);

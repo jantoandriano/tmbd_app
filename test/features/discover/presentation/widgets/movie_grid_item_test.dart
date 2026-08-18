@@ -14,7 +14,10 @@ Movie _movie({String? posterPath}) => Movie(
 
 Widget _boundedHome(Widget child) => MaterialApp(
   home: Scaffold(
-    body: SizedBox(width: 200, height: 300, child: child),
+    body: SizedBox(
+      height: 300,
+      child: Align(alignment: Alignment.topLeft, child: child),
+    ),
   ),
 );
 
@@ -23,7 +26,9 @@ void main() {
     tester,
   ) async {
     await tester.pumpWidget(
-      _boundedHome(MovieGridItem(movie: _movie(), onTap: () {})),
+      _boundedHome(
+        MovieGridItem(movie: _movie(), showReleaseDate: false, onTap: () {}),
+      ),
     );
 
     expect(find.byIcon(Icons.movie_outlined), findsOneWidget);
@@ -34,7 +39,13 @@ void main() {
     var tapped = false;
 
     await tester.pumpWidget(
-      _boundedHome(MovieGridItem(movie: _movie(), onTap: () => tapped = true)),
+      _boundedHome(
+        MovieGridItem(
+          movie: _movie(),
+          showReleaseDate: false,
+          onTap: () => tapped = true,
+        ),
+      ),
     );
     await tester.tap(find.byType(MovieGridItem));
 

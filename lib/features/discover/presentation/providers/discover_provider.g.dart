@@ -33,7 +33,7 @@ final class DiscoverNotifierProvider
   DiscoverNotifier create() => DiscoverNotifier();
 }
 
-String _$discoverNotifierHash() => r'770b130a87d928062500a489259bbbea5b7a3ed5';
+String _$discoverNotifierHash() => r'220e2be09ba2ad17797a8de730910586834ab65e';
 
 abstract class _$DiscoverNotifier extends $AsyncNotifier<DiscoverState> {
   FutureOr<DiscoverState> build();

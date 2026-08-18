@@ -3,12 +3,21 @@ import 'package:cinetrack/features/discover/domain/entities/paginated_movies.dar
 import 'package:cinetrack/features/discover/domain/repositories/discover_repository.dart';
 
 class FakeDiscoverRepository implements DiscoverRepository {
-  FakeDiscoverRepository(this.result);
+  FakeDiscoverRepository(
+    this.nowPlayingResult, [
+    Result<PaginatedMovies>? upcomingResult,
+  ]) : upcomingResult = upcomingResult ?? nowPlayingResult;
 
-  final Result<PaginatedMovies> result;
+  final Result<PaginatedMovies> nowPlayingResult;
+  final Result<PaginatedMovies> upcomingResult;
 
   @override
-  Future<Result<PaginatedMovies>> getPopularMovies({
+  Future<Result<PaginatedMovies>> getNowPlayingMovies({
     required int page,
-  }) async => result;
+  }) async => nowPlayingResult;
+
+  @override
+  Future<Result<PaginatedMovies>> getUpcomingMovies({
+    required int page,
+  }) async => upcomingResult;
 }

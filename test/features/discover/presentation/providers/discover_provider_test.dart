@@ -32,85 +32,60 @@ void main() {
 
   tearDown(() => container.dispose());
 
-  test('build loads page 1 into state', () async {
-    when(() => repository.getPopularMovies(page: 1)).thenAnswer(
+  test('build loads now playing and upcoming into state', () async {
+    when(() => repository.getNowPlayingMovies(page: 1)).thenAnswer(
       (_) async =>
           Right(PaginatedMovies(movies: [_movie(1)], page: 1, totalPages: 5)),
+    );
+    when(() => repository.getUpcomingMovies(page: 1)).thenAnswer(
+      (_) async => Right(
+        PaginatedMovies(movies: [_movie(2), _movie(3)], page: 1, totalPages: 3),
+      ),
     );
 
     final state = await container.read(discoverProvider.future);
 
-    expect(state.movies, hasLength(1));
-    expect(state.hasReachedMax, isFalse);
+    expect(state.nowPlaying, hasLength(1));
+    expect(state.comingSoon, hasLength(2));
   });
 
-  test('build surfaces a repository failure as an AsyncError', () async {
-    when(
-      () => repository.getPopularMovies(page: 1),
-    ).thenAnswer((_) async => const Left(Failure.network('offline')));
+  test(
+    'build surfaces a now-playing repository failure as an AsyncError',
+    () async {
+      when(
+        () => repository.getNowPlayingMovies(page: 1),
+      ).thenAnswer((_) async => const Left(Failure.network('offline')));
+      when(() => repository.getUpcomingMovies(page: 1)).thenAnswer(
+        (_) async =>
+            const Right(PaginatedMovies(movies: [], page: 1, totalPages: 1)),
+      );
 
-    container.listen(discoverProvider, (_, _) {});
-    await container.pump();
+      container.listen(discoverProvider, (_, _) {});
+      await container.pump();
 
-    final state = container.read(discoverProvider);
-    expect(state.hasError, isTrue);
-    expect(state.error, isA<Failure>());
-  });
+      final state = container.read(discoverProvider);
+      expect(state.hasError, isTrue);
+      expect(state.error, isA<Failure>());
+    },
+  );
 
-  test('loadNextPage appends movies and advances the page', () async {
-    when(() => repository.getPopularMovies(page: 1)).thenAnswer(
-      (_) async =>
-          Right(PaginatedMovies(movies: [_movie(1)], page: 1, totalPages: 2)),
-    );
-    when(() => repository.getPopularMovies(page: 2)).thenAnswer(
-      (_) async =>
-          Right(PaginatedMovies(movies: [_movie(2)], page: 2, totalPages: 2)),
-    );
+  test(
+    'build surfaces an upcoming repository failure as an AsyncError',
+    () async {
+      when(() => repository.getNowPlayingMovies(page: 1)).thenAnswer(
+        (_) async =>
+            const Right(PaginatedMovies(movies: [], page: 1, totalPages: 1)),
+      );
+      when(
+        () => repository.getUpcomingMovies(page: 1),
+      ).thenAnswer((_) async => const Left(Failure.network('offline')));
 
-    await container.read(discoverProvider.future);
-    final failure = await container
-        .read(discoverProvider.notifier)
-        .loadNextPage();
+      container.listen(discoverProvider, (_, _) {});
+      await container.pump();
 
-    final state = container.read(discoverProvider).value!;
-    expect(failure, isNull);
-    expect(state.movies, hasLength(2));
-    expect(state.page, 2);
-    expect(state.hasReachedMax, isTrue);
-  });
-
-  test('loadNextPage failure leaves existing movies untouched', () async {
-    when(() => repository.getPopularMovies(page: 1)).thenAnswer(
-      (_) async =>
-          Right(PaginatedMovies(movies: [_movie(1)], page: 1, totalPages: 5)),
-    );
-    when(
-      () => repository.getPopularMovies(page: 2),
-    ).thenAnswer((_) async => const Left(Failure.network('offline')));
-
-    await container.read(discoverProvider.future);
-    final failure = await container
-        .read(discoverProvider.notifier)
-        .loadNextPage();
-
-    final state = container.read(discoverProvider).value!;
-    expect(failure, isA<NetworkFailure>());
-    expect(state.movies, hasLength(1));
-    expect(state.isLoadingMore, isFalse);
-  });
-
-  test('loadNextPage is a no-op once hasReachedMax is true', () async {
-    when(() => repository.getPopularMovies(page: 1)).thenAnswer(
-      (_) async =>
-          Right(PaginatedMovies(movies: [_movie(1)], page: 1, totalPages: 1)),
-    );
-
-    await container.read(discoverProvider.future);
-    final failure = await container
-        .read(discoverProvider.notifier)
-        .loadNextPage();
-
-    expect(failure, isNull);
-    verifyNever(() => repository.getPopularMovies(page: 2));
-  });
+      final state = container.read(discoverProvider);
+      expect(state.hasError, isTrue);
+      expect(state.error, isA<Failure>());
+    },
+  );
 }

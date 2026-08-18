@@ -1,6 +1,7 @@
 import 'package:cinetrack/core/errors/failure.dart';
 import 'package:cinetrack/core/utils/result.dart';
 import 'package:cinetrack/features/discover/data/datasources/discover_remote_data_source.dart';
+import 'package:cinetrack/features/discover/data/models/movie_page_response_model.dart';
 import 'package:cinetrack/features/discover/domain/entities/paginated_movies.dart';
 import 'package:cinetrack/features/discover/domain/repositories/discover_repository.dart';
 import 'package:dio/dio.dart';
@@ -12,11 +13,18 @@ class DiscoverRepositoryImpl implements DiscoverRepository {
   final DiscoverRemoteDataSource _remoteDataSource;
 
   @override
-  Future<Result<PaginatedMovies>> getPopularMovies({
-    required int page,
-  }) async {
+  Future<Result<PaginatedMovies>> getNowPlayingMovies({required int page}) =>
+      _getMovies(() => _remoteDataSource.fetchNowPlayingMovies(page: page));
+
+  @override
+  Future<Result<PaginatedMovies>> getUpcomingMovies({required int page}) =>
+      _getMovies(() => _remoteDataSource.fetchUpcomingMovies(page: page));
+
+  Future<Result<PaginatedMovies>> _getMovies(
+    Future<MoviePageResponseModel> Function() fetch,
+  ) async {
     try {
-      final response = await _remoteDataSource.fetchPopularMovies(page: page);
+      final response = await fetch();
       return Right(
         PaginatedMovies(
           movies: response.results.map((m) => m.toEntity()).toList(),

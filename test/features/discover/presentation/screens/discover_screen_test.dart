@@ -29,6 +29,7 @@ void main() {
           totalPages: 5,
         ),
       ),
+      const Right(PaginatedMovies(movies: [], page: 1, totalPages: 1)),
     );
 
     await tester.pumpWidget(

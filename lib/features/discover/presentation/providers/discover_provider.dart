@@ -1,4 +1,5 @@
-import 'package:cinetrack/core/errors/failure.dart';
+import 'dart:async';
+
 import 'package:cinetrack/features/discover/presentation/providers/discover_di.dart';
 import 'package:cinetrack/features/discover/presentation/providers/discover_state.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -10,46 +11,20 @@ class DiscoverNotifier extends _$DiscoverNotifier {
   @override
   Future<DiscoverState> build() async {
     final repository = ref.watch(discoverRepositoryProvider);
-    final result = await repository.getPopularMovies(page: 1);
+    final results = await (
+      repository.getNowPlayingMovies(page: 1),
+      repository.getUpcomingMovies(page: 1),
+    ).wait;
 
-    return result.match(
+    final nowPlaying = results.$1.match(
       (failure) => throw failure,
-      (paginated) => DiscoverState(
-        movies: paginated.movies,
-        page: paginated.page,
-        hasReachedMax: paginated.page >= paginated.totalPages,
-      ),
+      (paginated) => paginated.movies,
     );
-  }
-
-  Future<Failure?> loadNextPage() async {
-    final current = state.value;
-    if (current == null || current.hasReachedMax || current.isLoadingMore) {
-      return null;
-    }
-
-    state = AsyncData(current.copyWith(isLoadingMore: true));
-
-    final repository = ref.read(discoverRepositoryProvider);
-    final nextPage = current.page + 1;
-    final result = await repository.getPopularMovies(page: nextPage);
-
-    return result.match<Failure?>(
-      (failure) {
-        state = AsyncData(current.copyWith(isLoadingMore: false));
-        return failure;
-      },
-      (paginated) {
-        state = AsyncData(
-          current.copyWith(
-            movies: [...current.movies, ...paginated.movies],
-            page: nextPage,
-            hasReachedMax: nextPage >= paginated.totalPages,
-            isLoadingMore: false,
-          ),
-        );
-        return null;
-      },
+    final comingSoon = results.$2.match(
+      (failure) => throw failure,
+      (paginated) => paginated.movies,
     );
+
+    return DiscoverState(nowPlaying: nowPlaying, comingSoon: comingSoon);
   }
 }

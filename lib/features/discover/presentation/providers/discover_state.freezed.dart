@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$DiscoverState {
 
- List<Movie> get movies; int get page; bool get hasReachedMax; bool get isLoadingMore;
+ List<Movie> get nowPlaying; List<Movie> get comingSoon;
 /// Create a copy of DiscoverState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $DiscoverStateCopyWith<DiscoverState> get copyWith => _$DiscoverStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiscoverState&&const DeepCollectionEquality().equals(other.movies, movies)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasReachedMax, hasReachedMax) || other.hasReachedMax == hasReachedMax)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is DiscoverState&&const DeepCollectionEquality().equals(other.nowPlaying, nowPlaying)&&const DeepCollectionEquality().equals(other.comingSoon, comingSoon));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(movies),page,hasReachedMax,isLoadingMore);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(nowPlaying),const DeepCollectionEquality().hash(comingSoon));
 
 @override
 String toString() {
-  return 'DiscoverState(movies: $movies, page: $page, hasReachedMax: $hasReachedMax, isLoadingMore: $isLoadingMore)';
+  return 'DiscoverState(nowPlaying: $nowPlaying, comingSoon: $comingSoon)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $DiscoverStateCopyWith<$Res>  {
   factory $DiscoverStateCopyWith(DiscoverState value, $Res Function(DiscoverState) _then) = _$DiscoverStateCopyWithImpl;
 @useResult
 $Res call({
- List<Movie> movies, int page, bool hasReachedMax, bool isLoadingMore
+ List<Movie> nowPlaying, List<Movie> comingSoon
 });
 
 
@@ -63,13 +63,11 @@ class _$DiscoverStateCopyWithImpl<$Res>
 
 /// Create a copy of DiscoverState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? movies = null,Object? page = null,Object? hasReachedMax = null,Object? isLoadingMore = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? nowPlaying = null,Object? comingSoon = null,}) {
   return _then(DiscoverState(
-movies: null == movies ? _self.movies : movies // ignore: cast_nullable_to_non_nullable
-as List<Movie>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
-as int,hasReachedMax: null == hasReachedMax ? _self.hasReachedMax : hasReachedMax // ignore: cast_nullable_to_non_nullable
-as bool,isLoadingMore: null == isLoadingMore ? _self.isLoadingMore : isLoadingMore // ignore: cast_nullable_to_non_nullable
-as bool,
+nowPlaying: null == nowPlaying ? _self.nowPlaying : nowPlaying // ignore: cast_nullable_to_non_nullable
+as List<Movie>,comingSoon: null == comingSoon ? _self.comingSoon : comingSoon // ignore: cast_nullable_to_non_nullable
+as List<Movie>,
   ));
 }
 
@@ -151,10 +149,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Movie> movies,  int page,  bool hasReachedMax,  bool isLoadingMore)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( List<Movie> nowPlaying,  List<Movie> comingSoon)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _DiscoverState() when $default != null:
-return $default(_that.movies,_that.page,_that.hasReachedMax,_that.isLoadingMore);case _:
+return $default(_that.nowPlaying,_that.comingSoon);case _:
   return orElse();
 
 }
@@ -172,10 +170,10 @@ return $default(_that.movies,_that.page,_that.hasReachedMax,_that.isLoadingMore)
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Movie> movies,  int page,  bool hasReachedMax,  bool isLoadingMore)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( List<Movie> nowPlaying,  List<Movie> comingSoon)  $default,) {final _that = this;
 switch (_that) {
 case _DiscoverState():
-return $default(_that.movies,_that.page,_that.hasReachedMax,_that.isLoadingMore);}
+return $default(_that.nowPlaying,_that.comingSoon);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -189,10 +187,10 @@ return $default(_that.movies,_that.page,_that.hasReachedMax,_that.isLoadingMore)
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Movie> movies,  int page,  bool hasReachedMax,  bool isLoadingMore)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( List<Movie> nowPlaying,  List<Movie> comingSoon)?  $default,) {final _that = this;
 switch (_that) {
 case _DiscoverState() when $default != null:
-return $default(_that.movies,_that.page,_that.hasReachedMax,_that.isLoadingMore);case _:
+return $default(_that.nowPlaying,_that.comingSoon);case _:
   return null;
 
 }
@@ -204,19 +202,23 @@ return $default(_that.movies,_that.page,_that.hasReachedMax,_that.isLoadingMore)
 
 
 class _DiscoverState implements DiscoverState {
-  const _DiscoverState({ List<Movie> movies = const <Movie>[], this.page = 1, this.hasReachedMax = false, this.isLoadingMore = false}): _movies = movies;
+  const _DiscoverState({ List<Movie> nowPlaying = const <Movie>[],  List<Movie> comingSoon = const <Movie>[]}): _nowPlaying = nowPlaying,_comingSoon = comingSoon;
   
 
- final  List<Movie> _movies;
-@override@JsonKey() List<Movie> get movies {
-  if (_movies is EqualUnmodifiableListView) return _movies;
+ final  List<Movie> _nowPlaying;
+@override@JsonKey() List<Movie> get nowPlaying {
+  if (_nowPlaying is EqualUnmodifiableListView) return _nowPlaying;
   // ignore: implicit_dynamic_type
-  return EqualUnmodifiableListView(_movies);
+  return EqualUnmodifiableListView(_nowPlaying);
 }
 
-@override@JsonKey() final  int page;
-@override@JsonKey() final  bool hasReachedMax;
-@override@JsonKey() final  bool isLoadingMore;
+ final  List<Movie> _comingSoon;
+@override@JsonKey() List<Movie> get comingSoon {
+  if (_comingSoon is EqualUnmodifiableListView) return _comingSoon;
+  // ignore: implicit_dynamic_type
+  return EqualUnmodifiableListView(_comingSoon);
+}
+
 
 /// Create a copy of DiscoverState
 /// with the given fields replaced by the non-null parameter values.
@@ -228,16 +230,16 @@ _$DiscoverStateCopyWith<_DiscoverState> get copyWith => __$DiscoverStateCopyWith
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DiscoverState&&const DeepCollectionEquality().equals(other._movies, _movies)&&(identical(other.page, page) || other.page == page)&&(identical(other.hasReachedMax, hasReachedMax) || other.hasReachedMax == hasReachedMax)&&(identical(other.isLoadingMore, isLoadingMore) || other.isLoadingMore == isLoadingMore));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _DiscoverState&&const DeepCollectionEquality().equals(other._nowPlaying, _nowPlaying)&&const DeepCollectionEquality().equals(other._comingSoon, _comingSoon));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_movies),page,hasReachedMax,isLoadingMore);
+int get hashCode => Object.hash(runtimeType,const DeepCollectionEquality().hash(_nowPlaying),const DeepCollectionEquality().hash(_comingSoon));
 
 @override
 String toString() {
-  return 'DiscoverState(movies: $movies, page: $page, hasReachedMax: $hasReachedMax, isLoadingMore: $isLoadingMore)';
+  return 'DiscoverState(nowPlaying: $nowPlaying, comingSoon: $comingSoon)';
 }
 
 
@@ -248,7 +250,7 @@ abstract mixin class _$DiscoverStateCopyWith<$Res> implements $DiscoverStateCopy
   factory _$DiscoverStateCopyWith(_DiscoverState value, $Res Function(_DiscoverState) _then) = __$DiscoverStateCopyWithImpl;
 @override @useResult
 $Res call({
- List<Movie> movies, int page, bool hasReachedMax, bool isLoadingMore
+ List<Movie> nowPlaying, List<Movie> comingSoon
 });
 
 
@@ -265,13 +267,11 @@ class __$DiscoverStateCopyWithImpl<$Res>
 
 /// Create a copy of DiscoverState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? movies = null,Object? page = null,Object? hasReachedMax = null,Object? isLoadingMore = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? nowPlaying = null,Object? comingSoon = null,}) {
   return _then(_DiscoverState(
-movies: null == movies ? _self._movies : movies // ignore: cast_nullable_to_non_nullable
-as List<Movie>,page: null == page ? _self.page : page // ignore: cast_nullable_to_non_nullable
-as int,hasReachedMax: null == hasReachedMax ? _self.hasReachedMax : hasReachedMax // ignore: cast_nullable_to_non_nullable
-as bool,isLoadingMore: null == isLoadingMore ? _self.isLoadingMore : isLoadingMore // ignore: cast_nullable_to_non_nullable
-as bool,
+nowPlaying: null == nowPlaying ? _self._nowPlaying : nowPlaying // ignore: cast_nullable_to_non_nullable
+as List<Movie>,comingSoon: null == comingSoon ? _self._comingSoon : comingSoon // ignore: cast_nullable_to_non_nullable
+as List<Movie>,
   ));
 }
 
