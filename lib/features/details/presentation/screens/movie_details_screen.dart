@@ -9,13 +9,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-const _grayscale = ColorFilter.matrix(<double>[
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0.2126, 0.7152, 0.0722, 0, 0,
-  0, 0, 0, 1, 0,
-]);
-
 class MovieDetailsScreen extends ConsumerWidget {
   const MovieDetailsScreen({required this.movieId, super.key});
 
@@ -90,15 +83,12 @@ class _Backdrop extends StatelessWidget {
   Widget build(BuildContext context) {
     return AspectRatio(
       aspectRatio: 16 / 9,
-      child: ColorFiltered(
-        colorFilter: _grayscale,
-        child: path == null
-            ? const ColoredBox(color: Colors.black12)
-            : CachedNetworkImage(
-                imageUrl: '${ApiConstants.tmdbImageBaseUrl}$path',
-                fit: BoxFit.cover,
-              ),
-      ),
+      child: path == null
+          ? const ColoredBox(color: Colors.black12)
+          : CachedNetworkImage(
+              imageUrl: '${ApiConstants.tmdbImageBaseUrl}$path',
+              fit: BoxFit.cover,
+            ),
     );
   }
 }
@@ -124,16 +114,12 @@ class _PosterMetaRow extends StatelessWidget {
           SizedBox(
             width: 92,
             height: 138,
-            child: ColorFiltered(
-              colorFilter: _grayscale,
-              child: posterPath == null
-                  ? const ColoredBox(color: Colors.black12)
-                  : CachedNetworkImage(
-                      imageUrl:
-                          '${ApiConstants.tmdbImageBaseUrl}$posterPath',
-                      fit: BoxFit.cover,
-                    ),
-            ),
+            child: posterPath == null
+                ? const ColoredBox(color: Colors.black12)
+                : CachedNetworkImage(
+                    imageUrl: '${ApiConstants.tmdbImageBaseUrl}$posterPath',
+                    fit: BoxFit.cover,
+                  ),
           ),
           const SizedBox(width: 12),
           Expanded(
@@ -261,20 +247,17 @@ class _CastStrip extends StatelessWidget {
                       child: SizedBox(
                         width: 56,
                         height: 56,
-                        child: ColorFiltered(
-                          colorFilter: _grayscale,
-                          child: member.profilePath == null
-                              ? const ColoredBox(
-                                  color: Colors.black12,
-                                  child: Icon(Icons.person),
-                                )
-                              : CachedNetworkImage(
-                                  imageUrl:
-                                      '${ApiConstants.tmdbImageBaseUrl}'
-                                      '${member.profilePath}',
-                                  fit: BoxFit.cover,
-                                ),
-                        ),
+                        child: member.profilePath == null
+                            ? const ColoredBox(
+                                color: Colors.black12,
+                                child: Icon(Icons.person),
+                              )
+                            : CachedNetworkImage(
+                                imageUrl:
+                                    '${ApiConstants.tmdbImageBaseUrl}'
+                                    '${member.profilePath}',
+                                fit: BoxFit.cover,
+                              ),
                       ),
                     ),
                     const SizedBox(height: 6),
