@@ -1,5 +1,5 @@
-import 'package:cinetrack/core/widgets/movie_details_placeholder_page.dart';
 import 'package:cinetrack/core/widgets/stub_page.dart';
+import 'package:cinetrack/features/details/presentation/screens/movie_details_screen.dart';
 import 'package:cinetrack/features/discover/presentation/screens/discover_screen.dart';
 import 'package:go_router/go_router.dart';
 
@@ -14,8 +14,8 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/movie/:id',
       name: 'movieDetails',
-      builder: (context, state) => MovieDetailsPlaceholderPage(
-        movieId: state.pathParameters['id']!,
+      builder: (context, state) => MovieDetailsScreen(
+        movieId: int.parse(state.pathParameters['id']!),
       ),
     ),
     GoRoute(
