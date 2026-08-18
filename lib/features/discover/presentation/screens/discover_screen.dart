@@ -16,6 +16,7 @@ class DiscoverScreen extends ConsumerStatefulWidget {
 
 class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
   final _scrollController = ScrollController();
+  int _navIndex = 0;
 
   @override
   void initState() {
@@ -59,7 +60,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
     final state = ref.watch(discoverProvider);
 
     return Scaffold(
-      appBar: AppBar(title: const Text('Discover')),
+      appBar: AppBar(title: const Text('CineTrack')),
       body: state.when(
         loading: () => const Center(child: CircularProgressIndicator()),
         error: (error, _) => Center(
@@ -77,12 +78,12 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         ),
         data: (discoverState) => GridView.builder(
           controller: _scrollController,
-          padding: const EdgeInsets.all(8),
+          padding: const EdgeInsets.all(12),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 2,
-            childAspectRatio: 0.6,
-            crossAxisSpacing: 8,
-            mainAxisSpacing: 8,
+            childAspectRatio: 0.62,
+            crossAxisSpacing: 12,
+            mainAxisSpacing: 12,
           ),
           itemCount:
               discoverState.movies.length +
@@ -98,6 +99,30 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             );
           },
         ),
+      ),
+      bottomNavigationBar: NavigationBar(
+        selectedIndex: _navIndex,
+        onDestinationSelected: (index) {
+          if (index == 1) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              const SnackBar(content: Text('Search coming soon')),
+            );
+            return;
+          }
+          setState(() => _navIndex = index);
+        },
+        destinations: const [
+          NavigationDestination(
+            icon: Icon(Icons.explore_outlined),
+            selectedIcon: Icon(Icons.explore),
+            label: 'Discover',
+          ),
+          NavigationDestination(
+            icon: Icon(Icons.search_outlined),
+            selectedIcon: Icon(Icons.search),
+            label: 'Search',
+          ),
+        ],
       ),
     );
   }
