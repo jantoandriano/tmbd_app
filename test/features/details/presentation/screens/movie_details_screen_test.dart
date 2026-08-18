@@ -80,4 +80,80 @@ void main() {
     expect(find.text('Edward Norton'), findsOneWidget);
     expect(find.text('The Narrator'), findsOneWidget);
   });
+
+  testWidgets('toggles the watchlist button label on tap', (tester) async {
+    await tester.pumpWidget(
+      _wrap(
+        const MovieDetailsScreen(movieId: 550),
+        result: const Right(_movie),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Add to Watchlist'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('Add to Watchlist'));
+    await tester.tap(find.text('Add to Watchlist'));
+    await tester.pump();
+
+    expect(find.text('In Watchlist'), findsOneWidget);
+  });
+
+  testWidgets('shows a snackbar when there is no trailer', (tester) async {
+    await tester.pumpWidget(
+      _wrap(
+        const MovieDetailsScreen(movieId: 550),
+        result: const Right(_movie),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.text('Trailer'));
+    await tester.tap(find.text('Trailer'));
+    await tester.pump();
+
+    expect(find.text('No trailer available'), findsOneWidget);
+  });
+
+  testWidgets('tapping a suggested chip appends a Q&A turn', (tester) async {
+    await tester.pumpWidget(
+      _wrap(
+        const MovieDetailsScreen(movieId: 550),
+        result: const Right(_movie),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('Who directed this?'), findsWidgets);
+
+    await tester.ensureVisible(find.text('Who directed this?').last);
+    await tester.tap(find.text('Who directed this?').last);
+    await tester.pumpAndSettle();
+
+    expect(find.textContaining('Fight Club'), findsWidgets);
+  });
+
+  testWidgets('submitting a typed question appends a Q&A turn', (
+    tester,
+  ) async {
+    await tester.pumpWidget(
+      _wrap(
+        const MovieDetailsScreen(movieId: 550),
+        result: const Right(_movie),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    await tester.ensureVisible(find.byType(TextField));
+    await tester.enterText(
+      find.byType(TextField),
+      'What is the meaning of life?',
+    );
+    await tester.ensureVisible(find.byIcon(Icons.send));
+    await tester.tap(find.byIcon(Icons.send));
+    await tester.pumpAndSettle();
+
+    expect(find.text('What is the meaning of life?'), findsOneWidget);
+    expect(find.textContaining('suggested questions'), findsOneWidget);
+  });
 }

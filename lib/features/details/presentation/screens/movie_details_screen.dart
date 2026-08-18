@@ -2,10 +2,12 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cinetrack/core/constants/api_constants.dart';
 import 'package:cinetrack/core/theme/app_theme.dart';
 import 'package:cinetrack/features/details/domain/entities/movie_details.dart';
+import 'package:cinetrack/features/details/presentation/providers/ai_overview_service_provider.dart';
 import 'package:cinetrack/features/details/presentation/providers/details_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 const _grayscale = ColorFilter.matrix(<double>[
   0.2126, 0.7152, 0.0722, 0, 0,
@@ -65,6 +67,12 @@ class _DetailsBody extends StatelessWidget {
         children: [
           _Backdrop(path: details.backdropPath),
           _PosterMetaRow(details: details),
+          _ActionRow(details: details),
+          const Divider(height: 2),
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: _AiOverviewPanel(movie: details),
+          ),
           if (details.cast.isNotEmpty) _CastStrip(cast: details.cast),
           const SizedBox(height: 16),
         ],
@@ -313,4 +321,223 @@ String _formatRuntime(int? minutes) {
   final remainder = minutes % 60;
   if (hours == 0) return '${remainder}m';
   return '${hours}h ${remainder}m';
+}
+
+class _ActionRow extends StatefulWidget {
+  const _ActionRow({required this.details});
+
+  final MovieDetails details;
+
+  @override
+  State<_ActionRow> createState() => _ActionRowState();
+}
+
+class _ActionRowState extends State<_ActionRow> {
+  bool _inWatchlist = false;
+
+  Future<void> _openTrailer() async {
+    final key = widget.details.youtubeTrailerKey;
+    if (key == null) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('No trailer available')),
+      );
+      return;
+    }
+    await launchUrl(
+      Uri.parse('https://www.youtube.com/watch?v=$key'),
+      mode: LaunchMode.externalApplication,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      child: Row(
+        children: [
+          ElevatedButton.icon(
+            onPressed: () => setState(() => _inWatchlist = !_inWatchlist),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: _inWatchlist
+                  ? const Color(0xffeae7e7)
+                  : AppTheme.accent,
+              foregroundColor: _inWatchlist
+                  ? AppTheme.textPrimary
+                  : Colors.white,
+            ),
+            icon: Icon(_inWatchlist ? Icons.check : Icons.add),
+            label: Text(_inWatchlist ? 'In Watchlist' : 'Add to Watchlist'),
+          ),
+          const SizedBox(width: 12),
+          OutlinedButton.icon(
+            onPressed: _openTrailer,
+            icon: const Icon(Icons.play_arrow),
+            label: const Text('Trailer'),
+          ),
+        ],
+      ),
+    );
+  }
+}
+
+class _QaTurn {
+  _QaTurn(this.question);
+
+  final String question;
+  String? answer;
+}
+
+const _suggestedQuestions = [
+  'Who directed this?',
+  'Similar movies',
+  'Content warnings?',
+];
+
+class _AiOverviewPanel extends ConsumerStatefulWidget {
+  const _AiOverviewPanel({required this.movie});
+
+  final MovieDetails movie;
+
+  @override
+  ConsumerState<_AiOverviewPanel> createState() => _AiOverviewPanelState();
+}
+
+class _AiOverviewPanelState extends ConsumerState<_AiOverviewPanel> {
+  final _controller = TextEditingController();
+  final _turns = <_QaTurn>[];
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  Future<void> _submit(String question) async {
+    final trimmed = question.trim();
+    if (trimmed.isEmpty) return;
+
+    _controller.clear();
+    final turn = _QaTurn(trimmed);
+    setState(() => _turns.add(turn));
+
+    final answer = await ref
+        .read(aiOverviewServiceProvider)
+        .answer(movie: widget.movie, question: trimmed);
+
+    if (!mounted) return;
+    setState(() => turn.answer = answer);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Container(
+      decoration: BoxDecoration(
+        border: Border.all(color: AppTheme.divider, width: 2),
+      ),
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            children: [
+              const Icon(
+                Icons.auto_awesome,
+                size: 14,
+                color: Color(0xffae1800),
+              ),
+              const SizedBox(width: 6),
+              Text(
+                'AI OVERVIEW',
+                style: GoogleFonts.archivo(
+                  fontSize: 11,
+                  fontWeight: FontWeight.w700,
+                  letterSpacing: 0.12 * 11,
+                  color: const Color(0xffae1800),
+                ),
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
+          Text(
+            widget.movie.overview,
+            style: GoogleFonts.archivo(
+              fontSize: 13,
+              height: 1.6,
+              color: AppTheme.textPrimary,
+            ),
+          ),
+          const SizedBox(height: 12),
+          Wrap(
+            spacing: 8,
+            runSpacing: 8,
+            children: _suggestedQuestions
+                .map(
+                  (question) => OutlinedButton(
+                    onPressed: () => _submit(question),
+                    style: OutlinedButton.styleFrom(
+                      side: const BorderSide(color: AppTheme.accent),
+                      foregroundColor: AppTheme.accent,
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 12,
+                        vertical: 6,
+                      ),
+                    ),
+                    child: Text(
+                      question,
+                      style: GoogleFonts.archivo(fontSize: 12),
+                    ),
+                  ),
+                )
+                .toList(),
+          ),
+          for (final turn in _turns) ...[
+            const SizedBox(height: 12),
+            Text(
+              turn.question,
+              style: GoogleFonts.archivo(
+                fontSize: 13,
+                fontWeight: FontWeight.w700,
+                color: AppTheme.textPrimary,
+              ),
+            ),
+            const SizedBox(height: 4),
+            Text(
+              turn.answer ?? '…',
+              style: GoogleFonts.archivo(
+                fontSize: 13,
+                height: 1.6,
+                color: AppTheme.textPrimary.withValues(alpha: 0.85),
+              ),
+            ),
+          ],
+          const SizedBox(height: 12),
+          const Divider(height: 2),
+          const SizedBox(height: 12),
+          Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _controller,
+                  decoration: const InputDecoration(
+                    hintText: 'Ask anything about this movie…',
+                    border: InputBorder.none,
+                  ),
+                  onSubmitted: _submit,
+                ),
+              ),
+              const SizedBox(width: 8),
+              InkWell(
+                onTap: () => _submit(_controller.text),
+                child: const CircleAvatar(
+                  radius: 18,
+                  backgroundColor: AppTheme.accent,
+                  child: Icon(Icons.send, size: 16, color: Colors.white),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
 }
