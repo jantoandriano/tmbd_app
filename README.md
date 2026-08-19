@@ -5,7 +5,7 @@ A Movie & TV catalog app powered by [TMDB](https://www.themoviedb.org/), built w
 ## Features
 
 - **Discover** — hero carousel (auto-playing, first 3 Now Playing movies) plus horizontally-scrolling Now Playing / Coming Soon rails, sourced from TMDB's `/movie/now_playing` and `/movie/upcoming`.
-- **Movie Details** — backdrop, poster, rating/genre/runtime meta, cast strip, a watchlist toggle, a trailer button (opens YouTube externally), and an "AI Overview" panel with a locally-mocked Q&A thread.
+- **Movie Details** — backdrop, poster, rating/genre/runtime meta, cast strip, a watchlist toggle, a trailer button (opens YouTube externally), and an "AI Overview" panel with a Gemini-generated summary and a follow-up Q&A thread (grounded on the movie's TMDB facts, includes prior turns as context).
 - Search, Watchlist, and Auth are scaffolded (`lib/features/{search,watchlist,auth}/`) but not yet implemented.
 
 ## Architecture
@@ -45,12 +45,14 @@ home screen, state should survive navigating away and back). Details uses
 a plain generated family function (`movieDetailsProvider(movieId: ...)`) —
 a one-shot fetch per movie id doesn't need notifier ceremony.
 
-**Dependency injection:** `get_it` + `injectable` own the one true `Dio`
-singleton (registered in `core/di/register_module.dart`, configured with
-the TMDB `api_key` and interceptors in `core/network/dio_client.dart`).
-Riverpod's `dioProvider` (`core/providers/dio_provider.dart`) bridges that
-singleton into the riverpod provider graph; every feature's `*_di.dart`
-builds its datasource/repository providers on top of it.
+**Dependency injection:** `get_it` + `injectable` own two named `Dio`
+singletons (registered in `core/di/register_module.dart`): the default one
+configured with the TMDB `api_key` (`core/network/dio_client.dart`), and a
+`@Named('gemini')` one configured with the Gemini `key` query param
+(`core/network/gemini_client.dart`). Riverpod's `dioProvider` and
+`geminiDioProvider` (`core/providers/`) bridge those singletons into the
+riverpod provider graph; every feature's `*_di.dart` builds its
+datasource/repository/service providers on top of them.
 
 **Routing:** `go_router`, declared in `core/router/app_router.dart`.
 
@@ -72,8 +74,10 @@ Feature specs and implementation plans live in `docs/superpowers/`:
 ## Getting Started
 
 1. Get a TMDB API key: https://www.themoviedb.org/settings/api
-2. Copy `env/dev.example.json` to `env/dev.json` and fill in `TMDB_API_KEY` (gitignored).
-3. Run:
+2. Get a free Gemini API key: https://aistudio.google.com/apikey
+3. Copy `env/dev.example.json` to `env/dev.json` and fill in `TMDB_API_KEY`
+   and `GEMINI_API_KEY` (gitignored).
+4. Run:
    ```
    flutter pub get
    flutter run --dart-define-from-file=env/dev.json
@@ -83,13 +87,14 @@ Feature specs and implementation plans live in `docs/superpowers/`:
 ## Testing
 
 ```
-flutter test --dart-define=TMDB_API_KEY=test_key_for_ci
+flutter test --dart-define=TMDB_API_KEY=test_key_for_ci --dart-define=GEMINI_API_KEY=test_key_for_ci
 flutter analyze
 ```
 
-Only `test/core/network/dio_client_test.dart` needs the `--dart-define` —
-every other test overrides its repository provider with a fake, so it
-never touches `Dio`/`EnvConfig`.
+Only `test/core/network/dio_client_test.dart` and
+`test/core/network/gemini_client_test.dart` need the `--dart-define`s —
+every other test overrides its repository/service provider with a fake, so
+it never touches `Dio`/`EnvConfig`.
 
 ## Codegen
 

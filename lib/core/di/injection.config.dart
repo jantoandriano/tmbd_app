@@ -24,6 +24,10 @@ extension GetItInjectableX on _i174.GetIt {
     final gh = _i526.GetItHelper(this, environment, environmentFilter);
     final registerModule = _$RegisterModule();
     gh.lazySingleton<_i361.Dio>(() => registerModule.dio);
+    gh.lazySingleton<_i361.Dio>(
+      () => registerModule.geminiDio,
+      instanceName: 'gemini',
+    );
     return this;
   }
 }

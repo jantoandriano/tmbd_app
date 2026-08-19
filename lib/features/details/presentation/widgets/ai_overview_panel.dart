@@ -1,5 +1,6 @@
 import 'package:cinetrack/core/theme/app_theme.dart';
 import 'package:cinetrack/features/details/domain/entities/movie_details.dart';
+import 'package:cinetrack/features/details/presentation/providers/ai_overview_provider.dart';
 import 'package:cinetrack/features/details/presentation/providers/ai_overview_service_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -42,12 +43,17 @@ class _AiOverviewPanelState extends ConsumerState<AiOverviewPanel> {
     if (trimmed.isEmpty) return;
 
     _controller.clear();
+    final history = [
+      for (final turn in _turns)
+        if (turn.answer != null)
+          (question: turn.question, answer: turn.answer!),
+    ];
     final turn = _QaTurn(trimmed);
     setState(() => _turns.add(turn));
 
     final answer = await ref
         .read(aiOverviewServiceProvider)
-        .answer(movie: widget.movie, question: trimmed);
+        .answer(movie: widget.movie, question: trimmed, history: history);
 
     if (!mounted) return;
     setState(() => turn.answer = answer);
@@ -83,14 +89,7 @@ class _AiOverviewPanelState extends ConsumerState<AiOverviewPanel> {
             ],
           ),
           const SizedBox(height: 10),
-          Text(
-            widget.movie.overview,
-            style: GoogleFonts.archivo(
-              fontSize: 13,
-              height: 1.6,
-              color: AppTheme.textPrimary,
-            ),
-          ),
+          _SummaryText(movie: widget.movie),
           const SizedBox(height: 12),
           Wrap(
             spacing: 8,
@@ -163,6 +162,28 @@ class _AiOverviewPanelState extends ConsumerState<AiOverviewPanel> {
           ),
         ],
       ),
+    );
+  }
+}
+
+class _SummaryText extends ConsumerWidget {
+  const _SummaryText({required this.movie});
+
+  final MovieDetails movie;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final summary = ref.watch(aiOverviewSummaryProvider(movie: movie));
+    final style = GoogleFonts.archivo(
+      fontSize: 13,
+      height: 1.6,
+      color: AppTheme.textPrimary,
+    );
+
+    return summary.when(
+      loading: () => Text('Generating overview…', style: style),
+      error: (_, _) => Text(movie.overview, style: style),
+      data: (text) => Text(text, style: style),
     );
   }
 }

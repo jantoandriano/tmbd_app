@@ -1,6 +1,7 @@
 import 'package:cinetrack/core/errors/failure.dart';
 import 'package:cinetrack/core/utils/result.dart';
 import 'package:cinetrack/features/details/domain/entities/movie_details.dart';
+import 'package:cinetrack/features/details/presentation/providers/ai_overview_service_provider.dart';
 import 'package:cinetrack/features/details/presentation/providers/details_di.dart';
 import 'package:cinetrack/features/details/presentation/screens/movie_details_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,6 +9,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:fpdart/fpdart.dart';
 
+import '../../../../helpers/fake_ai_overview_service.dart';
 import '../../../../helpers/fake_details_repository.dart';
 
 const _movie = MovieDetails(
@@ -31,6 +33,7 @@ Widget _wrap(Widget child, {required Result<MovieDetails> result}) =>
         detailsRepositoryProvider.overrideWithValue(
           FakeDetailsRepository(result),
         ),
+        aiOverviewServiceProvider.overrideWithValue(FakeAiOverviewService()),
       ],
       child: MaterialApp(home: child),
     );
@@ -79,6 +82,18 @@ void main() {
     expect(find.text('Thriller'), findsOneWidget);
     expect(find.text('Edward Norton'), findsOneWidget);
     expect(find.text('The Narrator'), findsOneWidget);
+  });
+
+  testWidgets('shows the AI-generated summary', (tester) async {
+    await tester.pumpWidget(
+      _wrap(
+        const MovieDetailsScreen(movieId: 550),
+        result: const Right(_movie),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('AI summary of Fight Club'), findsOneWidget);
   });
 
   testWidgets('toggles the watchlist button label on tap', (tester) async {
@@ -130,7 +145,10 @@ void main() {
     await tester.tap(find.text('Who directed this?').last);
     await tester.pumpAndSettle();
 
-    expect(find.textContaining('Fight Club'), findsWidgets);
+    expect(
+      find.text('AI answer to Who directed this?'),
+      findsOneWidget,
+    );
   });
 
   testWidgets('submitting a typed question appends a Q&A turn', (
@@ -154,6 +172,9 @@ void main() {
     await tester.pumpAndSettle();
 
     expect(find.text('What is the meaning of life?'), findsOneWidget);
-    expect(find.textContaining('suggested questions'), findsOneWidget);
+    expect(
+      find.text('AI answer to What is the meaning of life?'),
+      findsOneWidget,
+    );
   });
 }
