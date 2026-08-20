@@ -8,6 +8,7 @@ class AppTheme {
   static const Color surface = Color(0xfff3f2f2);
   static const Color textPrimary = Color(0xff201e1d);
   static const Color accent = Color(0xffec3013);
+  static const Color accentDark = Color(0xffae1800);
   static const Color divider = Color(0x66201e1d); // textPrimary @ 40%
 
   // No distinct dark palette in this flat red-on-white design; reuse light.

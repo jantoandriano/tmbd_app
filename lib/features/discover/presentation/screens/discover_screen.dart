@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:cinetrack/core/constants/api_constants.dart';
 import 'package:cinetrack/core/theme/app_theme.dart';
+import 'package:cinetrack/core/widgets/app_bottom_nav_bar.dart';
 import 'package:cinetrack/features/discover/domain/entities/movie.dart';
 import 'package:cinetrack/features/discover/presentation/providers/discover_provider.dart';
 import 'package:cinetrack/features/discover/presentation/widgets/movie_grid_item.dart';
@@ -95,45 +96,11 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
           comingSoon: discoverState.comingSoon,
         ),
       ),
-      bottomNavigationBar: SafeArea(
-        top: false,
-        child: Container(
-          decoration: const BoxDecoration(
-            color: Color(0xffeae9e9),
-            border: Border(top: BorderSide(color: AppTheme.divider, width: 2)),
-          ),
-          child: SizedBox(
-            height: 64,
-            child: Row(
-              children: [
-                Expanded(
-                  child: _BottomNavItem(
-                    icon: Icons.explore_outlined,
-                    label: 'Discover',
-                    active: true,
-                    onTap: () {},
-                  ),
-                ),
-                Expanded(
-                  child: Center(
-                    child: Transform.translate(
-                      offset: const Offset(0, -14),
-                      child: _ScanButton(onTap: _showComingSoon),
-                    ),
-                  ),
-                ),
-                Expanded(
-                  child: _BottomNavItem(
-                    icon: Icons.confirmation_number_outlined,
-                    label: 'Tickets',
-                    active: false,
-                    onTap: _showComingSoon,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ),
+      bottomNavigationBar: AppBottomNavBar(
+        active: BottomNavTab.discover,
+        onDiscoverTap: () {},
+        onScanTap: _showComingSoon,
+        onTicketsTap: _showComingSoon,
       ),
     );
   }
@@ -414,73 +381,6 @@ class _MovieSection extends StatelessWidget {
           ),
         ),
       ],
-    );
-  }
-}
-
-class _BottomNavItem extends StatelessWidget {
-  const _BottomNavItem({
-    required this.icon,
-    required this.label,
-    required this.active,
-    required this.onTap,
-  });
-
-  final IconData icon;
-  final String label;
-  final bool active;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final color = active ? const Color(0xffae1800) : const Color(0xff7d7979);
-
-    return GestureDetector(
-      behavior: HitTestBehavior.opaque,
-      onTap: onTap,
-      child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Icon(icon, size: 22, color: color),
-          const SizedBox(height: 4),
-          Text(
-            label,
-            style: GoogleFonts.archivo(
-              fontSize: 11,
-              fontWeight: active ? FontWeight.w600 : FontWeight.w400,
-              color: color,
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
-class _ScanButton extends StatelessWidget {
-  const _ScanButton({required this.onTap});
-
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    return GestureDetector(
-      onTap: onTap,
-      child: Container(
-        width: 52,
-        height: 52,
-        alignment: Alignment.center,
-        decoration: BoxDecoration(
-          shape: BoxShape.circle,
-          color: AppTheme.accent,
-          boxShadow: kElevationToShadow[4],
-        ),
-        child: const Icon(
-          Icons.camera_alt_outlined,
-          size: 22,
-          color: Colors.white,
-        ),
-      ),
     );
   }
 }

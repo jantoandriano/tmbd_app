@@ -1,6 +1,7 @@
 import 'package:cinetrack/core/widgets/stub_page.dart';
 import 'package:cinetrack/features/details/presentation/screens/movie_details_screen.dart';
 import 'package:cinetrack/features/discover/presentation/screens/discover_screen.dart';
+import 'package:cinetrack/features/profile/presentation/screens/profile_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -21,7 +22,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/profile',
       name: 'profile',
-      builder: (context, state) => const StubPage(title: 'Profile'),
+      builder: (context, state) => const ProfileScreen(),
     ),
     GoRoute(
       path: '/assistant',
@@ -32,6 +33,31 @@ final GoRouter appRouter = GoRouter(
       path: '/notifications',
       name: 'notifications',
       builder: (context, state) => const StubPage(title: 'Notifications'),
+    ),
+    GoRoute(
+      path: '/settings',
+      name: 'settings',
+      builder: (context, state) => const StubPage(title: 'Settings'),
+    ),
+    GoRoute(
+      path: '/edit-profile',
+      name: 'editProfile',
+      builder: (context, state) => const StubPage(title: 'Edit Profile'),
+    ),
+    GoRoute(
+      path: '/account',
+      name: 'account',
+      builder: (context, state) => const StubPage(title: 'Account'),
+    ),
+    GoRoute(
+      path: '/payment-methods',
+      name: 'paymentMethods',
+      builder: (context, state) => const StubPage(title: 'Payment Methods'),
+    ),
+    GoRoute(
+      path: '/help-support',
+      name: 'helpSupport',
+      builder: (context, state) => const StubPage(title: 'Help & Support'),
     ),
   ],
 );
