@@ -11,5 +11,6 @@ sealed class Movie with _$Movie {
     required String overview,
     String? posterPath,
     String? releaseDate,
+    @Default(<int>[]) List<int> genreIds,
   }) = _Movie;
 }

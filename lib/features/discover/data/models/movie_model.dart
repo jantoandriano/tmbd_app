@@ -13,6 +13,7 @@ sealed class MovieModel with _$MovieModel {
     required String overview,
     @JsonKey(name: 'poster_path') String? posterPath,
     @JsonKey(name: 'release_date') String? releaseDate,
+    @JsonKey(name: 'genre_ids') @Default(<int>[]) List<int> genreIds,
   }) = _MovieModel;
 
   const MovieModel._();
@@ -27,5 +28,6 @@ sealed class MovieModel with _$MovieModel {
     voteAverage: voteAverage,
     releaseDate: releaseDate,
     overview: overview,
+    genreIds: genreIds,
   );
 }

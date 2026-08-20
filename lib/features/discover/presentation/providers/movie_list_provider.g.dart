@@ -50,7 +50,7 @@ final class MovieListNotifierProvider
   }
 }
 
-String _$movieListNotifierHash() => r'65e66555dae8de5b93b580dafa127624f9a12f7b';
+String _$movieListNotifierHash() => r'6f677149dd93281905d428566746c6b449ea5731';
 
 final class MovieListNotifierFamily extends $Family
     with

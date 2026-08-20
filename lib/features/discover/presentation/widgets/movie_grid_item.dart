@@ -67,9 +67,9 @@ class MovieGridItem extends StatelessWidget {
             ),
             const SizedBox(height: 4),
             if (showReleaseDate)
-              _DateTag(movie: movie)
+              DateTag(movie: movie)
             else
-              _RatingTag(movie: movie),
+              RatingTag(movie: movie),
           ],
         ),
       ),
@@ -77,8 +77,8 @@ class MovieGridItem extends StatelessWidget {
   }
 }
 
-class _RatingTag extends StatelessWidget {
-  const _RatingTag({required this.movie});
+class RatingTag extends StatelessWidget {
+  const RatingTag({required this.movie, super.key});
 
   final Movie movie;
 
@@ -112,8 +112,8 @@ class _RatingTag extends StatelessWidget {
   }
 }
 
-class _DateTag extends StatelessWidget {
-  const _DateTag({required this.movie});
+class DateTag extends StatelessWidget {
+  const DateTag({required this.movie, super.key});
 
   final Movie movie;
 
