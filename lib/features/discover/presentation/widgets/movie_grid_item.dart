@@ -15,41 +15,45 @@ class MovieGridItem extends StatelessWidget {
     required this.movie,
     required this.onTap,
     required this.showReleaseDate,
+    this.width = 112,
     super.key,
   });
 
   final Movie movie;
   final VoidCallback onTap;
   final bool showReleaseDate;
+  final double width;
 
   @override
   Widget build(BuildContext context) {
     final posterPath = movie.posterPath;
 
+    final poster = AspectRatio(
+      aspectRatio: 2 / 3,
+      child: posterPath == null
+          ? const ColoredBox(
+              color: Colors.black12,
+              child: Icon(Icons.movie_outlined),
+            )
+          : CachedNetworkImage(
+              imageUrl: '${ApiConstants.tmdbImageBaseUrl}$posterPath',
+              fit: BoxFit.cover,
+              placeholder: (context, url) =>
+                  const ColoredBox(color: Colors.black12),
+              errorWidget: (context, url, error) =>
+                  const Icon(Icons.broken_image_outlined),
+            ),
+    );
+
     return GestureDetector(
       behavior: HitTestBehavior.opaque,
       onTap: onTap,
       child: SizedBox(
-        width: 112,
+        width: width,
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            AspectRatio(
-              aspectRatio: 2 / 3,
-              child: posterPath == null
-                  ? const ColoredBox(
-                      color: Colors.black12,
-                      child: Icon(Icons.movie_outlined),
-                    )
-                  : CachedNetworkImage(
-                      imageUrl: '${ApiConstants.tmdbImageBaseUrl}$posterPath',
-                      fit: BoxFit.cover,
-                      placeholder: (context, url) =>
-                          const ColoredBox(color: Colors.black12),
-                      errorWidget: (context, url, error) =>
-                          const Icon(Icons.broken_image_outlined),
-                    ),
-            ),
+            poster,
             const SizedBox(height: 6),
             Text(
               movie.title,
@@ -138,8 +142,18 @@ String _year(String? releaseDate) {
 }
 
 const _monthAbbr = [
-  'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-  'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec',
+  'Jan',
+  'Feb',
+  'Mar',
+  'Apr',
+  'May',
+  'Jun',
+  'Jul',
+  'Aug',
+  'Sep',
+  'Oct',
+  'Nov',
+  'Dec',
 ];
 
 String _shortDate(String? releaseDate) {

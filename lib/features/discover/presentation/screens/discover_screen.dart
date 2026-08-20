@@ -6,6 +6,8 @@ import 'package:cinetrack/core/theme/app_theme.dart';
 import 'package:cinetrack/core/widgets/app_bottom_nav_bar.dart';
 import 'package:cinetrack/features/discover/domain/entities/movie.dart';
 import 'package:cinetrack/features/discover/presentation/providers/discover_provider.dart';
+import 'package:cinetrack/features/discover/presentation/providers/movie_list_provider.dart';
+import 'package:cinetrack/features/discover/presentation/screens/movie_list_screen.dart';
 import 'package:cinetrack/features/discover/presentation/widgets/movie_grid_item.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -20,12 +22,6 @@ class DiscoverScreen extends ConsumerStatefulWidget {
 }
 
 class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
-  void _showSearchStub() {
-    ScaffoldMessenger.of(
-      context,
-    ).showSnackBar(const SnackBar(content: Text('Search coming soon')));
-  }
-
   void _showComingSoon() {
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("This feature isn't available yet.")),
@@ -64,11 +60,6 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
             icon: const _NotificationsIcon(),
             tooltip: 'Notifications',
             onPressed: () => context.push('/notifications'),
-          ),
-          IconButton(
-            icon: const Icon(Icons.search),
-            tooltip: 'Search',
-            onPressed: _showSearchStub,
           ),
         ],
         bottom: PreferredSize(
@@ -153,6 +144,7 @@ class _DiscoverBody extends StatelessWidget {
               title: 'Now Playing',
               movies: nowPlaying,
               showReleaseDate: false,
+              listType: MovieListType.nowPlaying,
             ),
           if (comingSoon.isNotEmpty) ...[
             const Divider(height: 2),
@@ -160,6 +152,7 @@ class _DiscoverBody extends StatelessWidget {
               title: 'Coming Soon',
               movies: comingSoon,
               showReleaseDate: true,
+              listType: MovieListType.comingSoon,
             ),
           ],
           const SizedBox(height: 16),
@@ -327,11 +320,13 @@ class _MovieSection extends StatelessWidget {
     required this.title,
     required this.movies,
     required this.showReleaseDate,
+    required this.listType,
   });
 
   final String title;
   final List<Movie> movies;
   final bool showReleaseDate;
+  final MovieListType listType;
 
   @override
   Widget build(BuildContext context) {
@@ -352,12 +347,22 @@ class _MovieSection extends StatelessWidget {
                   ),
                 ),
               ),
-              Text(
-                'See all',
-                style: GoogleFonts.archivo(
-                  fontSize: 12,
-                  fontWeight: FontWeight.w600,
-                  color: const Color(0xffae1800),
+              GestureDetector(
+                onTap: () => context.push(
+                  '/movie-list',
+                  extra: MovieListArgs(
+                    title: title,
+                    type: listType,
+                    showReleaseDate: showReleaseDate,
+                  ),
+                ),
+                child: Text(
+                  'See all',
+                  style: GoogleFonts.archivo(
+                    fontSize: 12,
+                    fontWeight: FontWeight.w600,
+                    color: const Color(0xffae1800),
+                  ),
                 ),
               ),
             ],
