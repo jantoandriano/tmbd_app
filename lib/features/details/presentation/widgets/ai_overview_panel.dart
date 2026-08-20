@@ -14,8 +14,8 @@ class _QaTurn {
 }
 
 const _suggestedQuestions = [
-  'Who directed this?',
-  'Similar movies',
+  'Who stars in this?',
+  'What genre is this?',
   'Content warnings?',
 ];
 
@@ -125,14 +125,17 @@ class _AiOverviewPanelState extends ConsumerState<AiOverviewPanel> {
               ),
             ),
             const SizedBox(height: 4),
-            Text(
-              turn.answer ?? '…',
-              style: GoogleFonts.archivo(
-                fontSize: 13,
-                height: 1.6,
-                color: AppTheme.textPrimary.withValues(alpha: 0.85),
+            if (turn.answer == null)
+              const _ThinkingIndicator()
+            else
+              Text(
+                turn.answer!,
+                style: GoogleFonts.archivo(
+                  fontSize: 13,
+                  height: 1.6,
+                  color: AppTheme.textPrimary.withValues(alpha: 0.85),
+                ),
               ),
-            ),
           ],
           const SizedBox(height: 12),
           const Divider(height: 2),
@@ -181,9 +184,65 @@ class _SummaryText extends ConsumerWidget {
     );
 
     return summary.when(
-      loading: () => Text('Generating overview…', style: style),
+      loading: () => const _ThinkingIndicator(),
       error: (_, _) => Text(movie.overview, style: style),
       data: (text) => Text(text, style: style),
+    );
+  }
+}
+
+class _ThinkingIndicator extends StatefulWidget {
+  const _ThinkingIndicator();
+
+  @override
+  State<_ThinkingIndicator> createState() => _ThinkingIndicatorState();
+}
+
+class _ThinkingIndicatorState extends State<_ThinkingIndicator>
+    with SingleTickerProviderStateMixin {
+  late final _controller =
+      AnimationController(vsync: this, duration: const Duration(milliseconds: 900))
+        ..repeat();
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      height: 18,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: List.generate(3, (i) {
+          return AnimatedBuilder(
+            animation: _controller,
+            builder: (context, child) {
+              final t = (_controller.value - i * 0.2) % 1.0;
+              final opacity = (0.3 + 0.7 * (1 - (t - 0.5).abs() * 2)).clamp(
+                0.3,
+                1.0,
+              );
+              return Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 2),
+                child: Opacity(
+                  opacity: opacity,
+                  child: Container(
+                    width: 6,
+                    height: 6,
+                    decoration: const BoxDecoration(
+                      color: AppTheme.accent,
+                      shape: BoxShape.circle,
+                    ),
+                  ),
+                ),
+              );
+            },
+          );
+        }),
+      ),
     );
   }
 }

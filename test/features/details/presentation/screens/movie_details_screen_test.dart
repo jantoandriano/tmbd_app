@@ -139,14 +139,14 @@ void main() {
     );
     await tester.pumpAndSettle();
 
-    expect(find.text('Who directed this?'), findsWidgets);
+    expect(find.text('Who stars in this?'), findsWidgets);
 
-    await tester.ensureVisible(find.text('Who directed this?').last);
-    await tester.tap(find.text('Who directed this?').last);
+    await tester.ensureVisible(find.text('Who stars in this?').last);
+    await tester.tap(find.text('Who stars in this?').last);
     await tester.pumpAndSettle();
 
     expect(
-      find.text('AI answer to Who directed this?'),
+      find.text('AI answer to Who stars in this?'),
       findsOneWidget,
     );
   });

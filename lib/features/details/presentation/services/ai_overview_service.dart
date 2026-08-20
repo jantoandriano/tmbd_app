@@ -59,7 +59,9 @@ class GeminiOverviewService implements AiOverviewService {
         systemInstruction:
             '${_movieFactsPrompt(movie)}\n\n'
             'Answer the question using only the facts above. If the facts '
-            "don't cover it, say so plainly. Keep the answer under 60 words. "
+            "don't cover it, say so plainly. If the question is not about "
+            'this movie, reply only with: "I can only help with questions '
+            'about this movie." Keep the answer under 60 words. '
             'No markdown.',
         contents: contents,
       );
@@ -74,7 +76,7 @@ class GeminiOverviewService implements AiOverviewService {
     required List<Map<String, Object?>> contents,
   }) async {
     final response = await _dio.post<Map<String, dynamic>>(
-      '${ApiConstants.geminiModel}:generateContent',
+      '/${ApiConstants.geminiModel}:generateContent',
       data: {
         'system_instruction': {
           'parts': [
