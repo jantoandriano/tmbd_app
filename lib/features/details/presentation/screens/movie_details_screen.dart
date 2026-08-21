@@ -4,6 +4,8 @@ import 'package:cinetrack/core/theme/app_theme.dart';
 import 'package:cinetrack/features/details/domain/entities/movie_details.dart';
 import 'package:cinetrack/features/details/presentation/providers/details_provider.dart';
 import 'package:cinetrack/features/details/presentation/widgets/ai_overview_panel.dart';
+import 'package:cinetrack/features/discover/domain/entities/movie.dart';
+import 'package:cinetrack/features/watchlist/presentation/providers/watchlist_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -306,18 +308,16 @@ String _formatRuntime(int? minutes) {
   return '${hours}h ${remainder}m';
 }
 
-class _ActionRow extends StatefulWidget {
+class _ActionRow extends ConsumerStatefulWidget {
   const _ActionRow({required this.details});
 
   final MovieDetails details;
 
   @override
-  State<_ActionRow> createState() => _ActionRowState();
+  ConsumerState<_ActionRow> createState() => _ActionRowState();
 }
 
-class _ActionRowState extends State<_ActionRow> {
-  bool _inWatchlist = false;
-
+class _ActionRowState extends ConsumerState<_ActionRow> {
   Future<void> _openTrailer() async {
     final key = widget.details.youtubeTrailerKey;
     if (key == null) {
@@ -332,24 +332,49 @@ class _ActionRowState extends State<_ActionRow> {
     );
   }
 
+  void _toggleWatchlist(bool inWatchlist) {
+    final notifier = ref.read(watchlistProvider.notifier);
+    if (inWatchlist) {
+      notifier.remove(widget.details.id);
+    } else {
+      final details = widget.details;
+      notifier.add(
+        Movie(
+          id: details.id,
+          title: details.title,
+          voteAverage: details.voteAverage,
+          overview: details.overview,
+          posterPath: details.posterPath,
+          releaseDate: details.releaseDate,
+        ),
+      );
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    final inWatchlist = ref.watch(
+      watchlistProvider.select(
+        (state) => state.movies.any((m) => m.id == widget.details.id),
+      ),
+    );
+
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       child: Row(
         children: [
           ElevatedButton.icon(
-            onPressed: () => setState(() => _inWatchlist = !_inWatchlist),
+            onPressed: () => _toggleWatchlist(inWatchlist),
             style: ElevatedButton.styleFrom(
-              backgroundColor: _inWatchlist
+              backgroundColor: inWatchlist
                   ? const Color(0xffeae7e7)
                   : AppTheme.accent,
-              foregroundColor: _inWatchlist
+              foregroundColor: inWatchlist
                   ? AppTheme.textPrimary
                   : Colors.white,
             ),
-            icon: Icon(_inWatchlist ? Icons.check : Icons.add),
-            label: Text(_inWatchlist ? 'In Watchlist' : 'Add to Watchlist'),
+            icon: Icon(inWatchlist ? Icons.check : Icons.add),
+            label: Text(inWatchlist ? 'In Watchlist' : 'Add to Watchlist'),
           ),
           const SizedBox(width: 12),
           OutlinedButton.icon(

@@ -3,6 +3,7 @@ import 'package:cinetrack/features/details/presentation/screens/movie_details_sc
 import 'package:cinetrack/features/discover/presentation/screens/discover_screen.dart';
 import 'package:cinetrack/features/discover/presentation/screens/movie_list_screen.dart';
 import 'package:cinetrack/features/profile/presentation/screens/profile_screen.dart';
+import 'package:cinetrack/features/watchlist/presentation/screens/watchlist_screen.dart';
 import 'package:go_router/go_router.dart';
 
 final GoRouter appRouter = GoRouter(
@@ -30,6 +31,11 @@ final GoRouter appRouter = GoRouter(
       path: '/profile',
       name: 'profile',
       builder: (context, state) => const ProfileScreen(),
+    ),
+    GoRoute(
+      path: '/watchlist',
+      name: 'watchlist',
+      builder: (context, state) => const WatchlistScreen(),
     ),
     GoRoute(
       path: '/assistant',

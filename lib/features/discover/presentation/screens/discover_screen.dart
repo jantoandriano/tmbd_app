@@ -91,7 +91,7 @@ class _DiscoverScreenState extends ConsumerState<DiscoverScreen> {
         active: BottomNavTab.discover,
         onDiscoverTap: () {},
         onScanTap: _showComingSoon,
-        onTicketsTap: _showComingSoon,
+        onWatchlistTap: () => context.push('/watchlist'),
       ),
     );
   }

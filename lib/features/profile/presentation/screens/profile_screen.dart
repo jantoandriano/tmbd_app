@@ -61,7 +61,7 @@ class ProfileScreen extends ConsumerWidget {
         active: BottomNavTab.none,
         onDiscoverTap: () => context.push('/'),
         onScanTap: () => _showComingSoon(context),
-        onTicketsTap: () => _showComingSoon(context),
+        onWatchlistTap: () => context.push('/watchlist'),
       ),
     );
   }

@@ -2,21 +2,21 @@ import 'package:cinetrack/core/theme/app_theme.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 
-enum BottomNavTab { discover, tickets, none }
+enum BottomNavTab { discover, watchlist, none }
 
 class AppBottomNavBar extends StatelessWidget {
   const AppBottomNavBar({
     required this.active,
     required this.onDiscoverTap,
     required this.onScanTap,
-    required this.onTicketsTap,
+    required this.onWatchlistTap,
     super.key,
   });
 
   final BottomNavTab active;
   final VoidCallback onDiscoverTap;
   final VoidCallback onScanTap;
-  final VoidCallback onTicketsTap;
+  final VoidCallback onWatchlistTap;
 
   @override
   Widget build(BuildContext context) {
@@ -49,10 +49,10 @@ class AppBottomNavBar extends StatelessWidget {
               ),
               Expanded(
                 child: _BottomNavItem(
-                  icon: Icons.confirmation_number_outlined,
-                  label: 'Tickets',
-                  active: active == BottomNavTab.tickets,
-                  onTap: onTicketsTap,
+                  icon: Icons.bookmark_outline,
+                  label: 'Watchlist',
+                  active: active == BottomNavTab.watchlist,
+                  onTap: onWatchlistTap,
                 ),
               ),
             ],
