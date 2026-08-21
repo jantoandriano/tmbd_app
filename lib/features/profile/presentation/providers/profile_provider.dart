@@ -10,7 +10,6 @@ class ProfileNotifier extends _$ProfileNotifier {
     name: 'Alex Rivera',
     email: 'alex.rivera@email.com',
     watchedCount: 128,
-    watchlistCount: 24,
     reviewsCount: 16,
   );
 }

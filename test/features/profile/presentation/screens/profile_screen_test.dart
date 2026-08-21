@@ -36,7 +36,7 @@ void main() {
     expect(find.text('Alex Rivera'), findsOneWidget);
     expect(find.text('alex.rivera@email.com'), findsOneWidget);
     expect(find.text('128'), findsOneWidget);
-    expect(find.text('24'), findsOneWidget);
+    expect(find.text('0'), findsOneWidget);
     expect(find.text('16'), findsOneWidget);
     expect(find.text('Account'), findsOneWidget);
     expect(find.text('Notifications'), findsOneWidget);

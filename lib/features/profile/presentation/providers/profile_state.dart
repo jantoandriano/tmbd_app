@@ -8,7 +8,6 @@ sealed class ProfileState with _$ProfileState {
     required String name,
     required String email,
     @Default(0) int watchedCount,
-    @Default(0) int watchlistCount,
     @Default(0) int reviewsCount,
   }) = _ProfileState;
 }

@@ -15,7 +15,7 @@ T _$identity<T>(T value) => value;
 /// @nodoc
 mixin _$ProfileState {
 
- String get name; String get email; int get watchedCount; int get watchlistCount; int get reviewsCount;
+ String get name; String get email; int get watchedCount; int get reviewsCount;
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
 @JsonKey(includeFromJson: false, includeToJson: false)
@@ -26,16 +26,16 @@ $ProfileStateCopyWith<ProfileState> get copyWith => _$ProfileStateCopyWithImpl<P
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileState&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.watchedCount, watchedCount) || other.watchedCount == watchedCount)&&(identical(other.watchlistCount, watchlistCount) || other.watchlistCount == watchlistCount)&&(identical(other.reviewsCount, reviewsCount) || other.reviewsCount == reviewsCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is ProfileState&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.watchedCount, watchedCount) || other.watchedCount == watchedCount)&&(identical(other.reviewsCount, reviewsCount) || other.reviewsCount == reviewsCount));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,email,watchedCount,watchlistCount,reviewsCount);
+int get hashCode => Object.hash(runtimeType,name,email,watchedCount,reviewsCount);
 
 @override
 String toString() {
-  return 'ProfileState(name: $name, email: $email, watchedCount: $watchedCount, watchlistCount: $watchlistCount, reviewsCount: $reviewsCount)';
+  return 'ProfileState(name: $name, email: $email, watchedCount: $watchedCount, reviewsCount: $reviewsCount)';
 }
 
 
@@ -46,7 +46,7 @@ abstract mixin class $ProfileStateCopyWith<$Res>  {
   factory $ProfileStateCopyWith(ProfileState value, $Res Function(ProfileState) _then) = _$ProfileStateCopyWithImpl;
 @useResult
 $Res call({
- String name, String email, int watchedCount, int watchlistCount, int reviewsCount
+ String name, String email, int watchedCount, int reviewsCount
 });
 
 
@@ -63,12 +63,11 @@ class _$ProfileStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
-@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? email = null,Object? watchedCount = null,Object? watchlistCount = null,Object? reviewsCount = null,}) {
+@pragma('vm:prefer-inline') @override $Res call({Object? name = null,Object? email = null,Object? watchedCount = null,Object? reviewsCount = null,}) {
   return _then(ProfileState(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,watchedCount: null == watchedCount ? _self.watchedCount : watchedCount // ignore: cast_nullable_to_non_nullable
-as int,watchlistCount: null == watchlistCount ? _self.watchlistCount : watchlistCount // ignore: cast_nullable_to_non_nullable
 as int,reviewsCount: null == reviewsCount ? _self.reviewsCount : reviewsCount // ignore: cast_nullable_to_non_nullable
 as int,
   ));
@@ -152,10 +151,10 @@ return $default(_that);case _:
 /// }
 /// ```
 
-@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String email,  int watchedCount,  int watchlistCount,  int reviewsCount)?  $default,{required TResult orElse(),}) {final _that = this;
+@optionalTypeArgs TResult maybeWhen<TResult extends Object?>(TResult Function( String name,  String email,  int watchedCount,  int reviewsCount)?  $default,{required TResult orElse(),}) {final _that = this;
 switch (_that) {
 case _ProfileState() when $default != null:
-return $default(_that.name,_that.email,_that.watchedCount,_that.watchlistCount,_that.reviewsCount);case _:
+return $default(_that.name,_that.email,_that.watchedCount,_that.reviewsCount);case _:
   return orElse();
 
 }
@@ -173,10 +172,10 @@ return $default(_that.name,_that.email,_that.watchedCount,_that.watchlistCount,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String email,  int watchedCount,  int watchlistCount,  int reviewsCount)  $default,) {final _that = this;
+@optionalTypeArgs TResult when<TResult extends Object?>(TResult Function( String name,  String email,  int watchedCount,  int reviewsCount)  $default,) {final _that = this;
 switch (_that) {
 case _ProfileState():
-return $default(_that.name,_that.email,_that.watchedCount,_that.watchlistCount,_that.reviewsCount);}
+return $default(_that.name,_that.email,_that.watchedCount,_that.reviewsCount);}
 }
 /// A variant of `when` that fallback to returning `null`
 ///
@@ -190,10 +189,10 @@ return $default(_that.name,_that.email,_that.watchedCount,_that.watchlistCount,_
 /// }
 /// ```
 
-@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String email,  int watchedCount,  int watchlistCount,  int reviewsCount)?  $default,) {final _that = this;
+@optionalTypeArgs TResult? whenOrNull<TResult extends Object?>(TResult? Function( String name,  String email,  int watchedCount,  int reviewsCount)?  $default,) {final _that = this;
 switch (_that) {
 case _ProfileState() when $default != null:
-return $default(_that.name,_that.email,_that.watchedCount,_that.watchlistCount,_that.reviewsCount);case _:
+return $default(_that.name,_that.email,_that.watchedCount,_that.reviewsCount);case _:
   return null;
 
 }
@@ -205,13 +204,12 @@ return $default(_that.name,_that.email,_that.watchedCount,_that.watchlistCount,_
 
 
 class _ProfileState implements ProfileState {
-  const _ProfileState({required this.name, required this.email, this.watchedCount = 0, this.watchlistCount = 0, this.reviewsCount = 0});
+  const _ProfileState({required this.name, required this.email, this.watchedCount = 0, this.reviewsCount = 0});
   
 
 @override final  String name;
 @override final  String email;
 @override@JsonKey() final  int watchedCount;
-@override@JsonKey() final  int watchlistCount;
 @override@JsonKey() final  int reviewsCount;
 
 /// Create a copy of ProfileState
@@ -224,16 +222,16 @@ _$ProfileStateCopyWith<_ProfileState> get copyWith => __$ProfileStateCopyWithImp
 
 @override
 bool operator ==(Object other) {
-  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileState&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.watchedCount, watchedCount) || other.watchedCount == watchedCount)&&(identical(other.watchlistCount, watchlistCount) || other.watchlistCount == watchlistCount)&&(identical(other.reviewsCount, reviewsCount) || other.reviewsCount == reviewsCount));
+  return identical(this, other) || (other.runtimeType == runtimeType&&other is _ProfileState&&(identical(other.name, name) || other.name == name)&&(identical(other.email, email) || other.email == email)&&(identical(other.watchedCount, watchedCount) || other.watchedCount == watchedCount)&&(identical(other.reviewsCount, reviewsCount) || other.reviewsCount == reviewsCount));
 }
 
 
 @override
-int get hashCode => Object.hash(runtimeType,name,email,watchedCount,watchlistCount,reviewsCount);
+int get hashCode => Object.hash(runtimeType,name,email,watchedCount,reviewsCount);
 
 @override
 String toString() {
-  return 'ProfileState(name: $name, email: $email, watchedCount: $watchedCount, watchlistCount: $watchlistCount, reviewsCount: $reviewsCount)';
+  return 'ProfileState(name: $name, email: $email, watchedCount: $watchedCount, reviewsCount: $reviewsCount)';
 }
 
 
@@ -244,7 +242,7 @@ abstract mixin class _$ProfileStateCopyWith<$Res> implements $ProfileStateCopyWi
   factory _$ProfileStateCopyWith(_ProfileState value, $Res Function(_ProfileState) _then) = __$ProfileStateCopyWithImpl;
 @override @useResult
 $Res call({
- String name, String email, int watchedCount, int watchlistCount, int reviewsCount
+ String name, String email, int watchedCount, int reviewsCount
 });
 
 
@@ -261,12 +259,11 @@ class __$ProfileStateCopyWithImpl<$Res>
 
 /// Create a copy of ProfileState
 /// with the given fields replaced by the non-null parameter values.
-@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? email = null,Object? watchedCount = null,Object? watchlistCount = null,Object? reviewsCount = null,}) {
+@override @pragma('vm:prefer-inline') $Res call({Object? name = null,Object? email = null,Object? watchedCount = null,Object? reviewsCount = null,}) {
   return _then(_ProfileState(
 name: null == name ? _self.name : name // ignore: cast_nullable_to_non_nullable
 as String,email: null == email ? _self.email : email // ignore: cast_nullable_to_non_nullable
 as String,watchedCount: null == watchedCount ? _self.watchedCount : watchedCount // ignore: cast_nullable_to_non_nullable
-as int,watchlistCount: null == watchlistCount ? _self.watchlistCount : watchlistCount // ignore: cast_nullable_to_non_nullable
 as int,reviewsCount: null == reviewsCount ? _self.reviewsCount : reviewsCount // ignore: cast_nullable_to_non_nullable
 as int,
   ));

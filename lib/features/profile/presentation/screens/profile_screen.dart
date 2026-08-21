@@ -1,6 +1,7 @@
 import 'package:cinetrack/core/theme/app_theme.dart';
 import 'package:cinetrack/core/widgets/app_bottom_nav_bar.dart';
 import 'package:cinetrack/features/profile/presentation/providers/profile_provider.dart';
+import 'package:cinetrack/features/watchlist/presentation/providers/watchlist_provider.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -24,6 +25,9 @@ class ProfileScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final profile = ref.watch(profileProvider);
+    final watchlistCount = ref.watch(
+      watchlistProvider.select((state) => state.movies.length),
+    );
 
     return Scaffold(
       appBar: AppBar(
@@ -48,7 +52,7 @@ class ProfileScreen extends ConsumerWidget {
             const Divider(height: 2),
             _StatsRow(
               watchedCount: profile.watchedCount,
-              watchlistCount: profile.watchlistCount,
+              watchlistCount: watchlistCount,
               reviewsCount: profile.reviewsCount,
             ),
             const Divider(height: 2),

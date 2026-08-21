@@ -12,7 +12,6 @@ void main() {
     expect(state.name, 'Alex Rivera');
     expect(state.email, 'alex.rivera@email.com');
     expect(state.watchedCount, 128);
-    expect(state.watchlistCount, 24);
     expect(state.reviewsCount, 16);
   });
 }
