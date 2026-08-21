@@ -23,9 +23,7 @@ const _suggestedPrompts = [
 ];
 
 class _ChatMessage {
-  _ChatMessage.user(this.content)
-    : isUser = true,
-      recommendations = const [];
+  _ChatMessage.user(this.content) : isUser = true, recommendations = const [];
 
   _ChatMessage.aiPending()
     : isUser = false,
@@ -337,24 +335,15 @@ class _RecommendationCard extends ConsumerWidget {
             SizedBox(
               width: 52,
               height: 78,
-              child: ColorFiltered(
-                colorFilter: const ColorFilter.matrix(<double>[
-                  0.2126, 0.7152, 0.0722, 0, 0, //
-                  0.2126, 0.7152, 0.0722, 0, 0, //
-                  0.2126, 0.7152, 0.0722, 0, 0, //
-                  0, 0, 0, 1, 0, //
-                ]),
-                child: posterPath == null
-                    ? const ColoredBox(
-                        color: Colors.black12,
-                        child: Icon(Icons.movie_outlined),
-                      )
-                    : CachedNetworkImage(
-                        imageUrl:
-                            '${ApiConstants.tmdbImageBaseUrl}$posterPath',
-                        fit: BoxFit.cover,
-                      ),
-              ),
+              child: posterPath == null
+                  ? const ColoredBox(
+                      color: Colors.black12,
+                      child: Icon(Icons.movie_outlined),
+                    )
+                  : CachedNetworkImage(
+                      imageUrl: '${ApiConstants.tmdbImageBaseUrl}$posterPath',
+                      fit: BoxFit.cover,
+                    ),
             ),
             const SizedBox(width: 10),
             Expanded(
@@ -472,12 +461,10 @@ class _ThinkingIndicator extends StatefulWidget {
 
 class _ThinkingIndicatorState extends State<_ThinkingIndicator>
     with SingleTickerProviderStateMixin {
-  late final _controller =
-      AnimationController(
-          vsync: this,
-          duration: const Duration(milliseconds: 900),
-        )
-        ..repeat();
+  late final _controller = AnimationController(
+    vsync: this,
+    duration: const Duration(milliseconds: 900),
+  )..repeat();
 
   @override
   void dispose() {
