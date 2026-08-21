@@ -6,7 +6,9 @@ A Movie & TV catalog app powered by [TMDB](https://www.themoviedb.org/), built w
 
 - **Discover** — hero carousel (auto-playing, first 3 Now Playing movies) plus horizontally-scrolling Now Playing / Coming Soon rails, sourced from TMDB's `/movie/now_playing` and `/movie/upcoming`.
 - **Movie Details** — backdrop, poster, rating/genre/runtime meta, cast strip, a watchlist toggle, a trailer button (opens YouTube externally), and an "AI Overview" panel with a Gemini-generated summary and a follow-up Q&A thread (grounded on the movie's TMDB facts, includes prior turns as context).
-- Search, Watchlist, and Auth are scaffolded (`lib/features/{search,watchlist,auth}/`) but not yet implemented.
+- **Watchlist** — screen listing movies the user has added, add/remove wired to a shared `watchlistProvider` consumed across Discover, Details, and the AI assistant.
+- **Ask AI** (`lib/features/ai_assistant/`) — a dedicated Gemini-backed chat screen, reached from the sparkles icon in the Discover app bar. Free-text Q&A about any movie, plus catalog-aware recommendations: the model is prompted with the current Discover catalog and, when relevant, replies with a machine-parsed `RECOMMEND: id,...` line that the client maps back to real `Movie`s and renders as inline cards with a poster, rating, and an "Add to Watchlist" button wired to the same `watchlistProvider`. Chat history is local to the screen session (not persisted).
+- Search and Auth are scaffolded (`lib/features/{search,auth}/`) but not yet implemented.
 
 ## Architecture
 
@@ -44,6 +46,14 @@ uses a `@Riverpod(keepAlive: true)` class-based `AsyncNotifier` (it's the
 home screen, state should survive navigating away and back). Details uses
 a plain generated family function (`movieDetailsProvider(movieId: ...)`) —
 a one-shot fetch per movie id doesn't need notifier ceremony.
+
+**AI features:** the "AI Overview" panel (`details/`) and "Ask AI" chat (`ai_assistant/`)
+skip the domain/data layers — there's no TMDB-shaped JSON to model, so each
+exposes a one-method abstract `*Service` (`AiOverviewService`,
+`AiChatService`) as its swap-point, implemented by a `Gemini*Service` that
+posts to the Gemini `generateContent` endpoint, with a plain `Provider` (not
+`@riverpod`) wiring it to `geminiDioProvider`. Test doubles implement the
+service interface directly instead of faking a repository.
 
 **Dependency injection:** `get_it` + `injectable` own two named `Dio`
 singletons (registered in `core/di/register_module.dart`): the default one
