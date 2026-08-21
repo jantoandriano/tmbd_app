@@ -1,4 +1,5 @@
 import 'package:cinetrack/core/widgets/stub_page.dart';
+import 'package:cinetrack/features/ai_assistant/presentation/screens/ai_assistant_screen.dart';
 import 'package:cinetrack/features/details/presentation/screens/movie_details_screen.dart';
 import 'package:cinetrack/features/discover/presentation/screens/discover_screen.dart';
 import 'package:cinetrack/features/discover/presentation/screens/movie_list_screen.dart';
@@ -40,7 +41,7 @@ final GoRouter appRouter = GoRouter(
     GoRoute(
       path: '/assistant',
       name: 'assistant',
-      builder: (context, state) => const StubPage(title: 'Ask AI'),
+      builder: (context, state) => const AiAssistantScreen(),
     ),
     GoRoute(
       path: '/notifications',
